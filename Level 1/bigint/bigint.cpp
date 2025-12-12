@@ -11,7 +11,7 @@ bigint::bigint(unsigned int num)
 {
     std::stringstream ss; //initialize a ss
     ss << num; //write the number in the stream (<< means write, >> means read)
-    this-> str = ss.str(); // get the contents of the stream as a std::string
+    this-> str = ss.str(); // extract the contents of ss using THE function "str()" and assign
 }
 
 bigint::bigint(const bigint& src)
@@ -146,7 +146,7 @@ bigint bigint::operator>>(unsigned int n) const
     if (n >= len)
         temp.str = "0";//right-shift a decimal number by more digits than it's, the result is always literal 0
     else
-        temp.str.erase(len - n, n);//just cut digit from the back; erase(start_index, count)
+        temp.str.erase(len - n, n);//just cut digit from the back; erase(posotion, count)
     return (temp);
 }
 
@@ -159,7 +159,7 @@ bigint& bigint::operator>>=(unsigned int n)
 unsigned int stringToUnit(std::string str)
 {
     unsigned int num;
-    std::stringstream ss(str);
+    std::stringstream ss(str); //create ss and fill it with given str
     ss >> num; //READ INTO NUM that also converts ans stores as a int
     return (num);
 }
