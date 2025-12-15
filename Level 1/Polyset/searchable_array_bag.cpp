@@ -1,21 +1,24 @@
 #include "searchable_array_bag.hpp"
+#include "searchable_tree_bag.hpp"
+
 
 searchable_array_bag::searchable_array_bag()
-{};
+{}
 
 
 //call base class copy const.
-searchable_array_bag::searchable_array_bag(const searchable_array_bag& source):array_bag(source)
+searchable_array_bag::searchable_array_bag(const searchable_array_bag& source):array_bag(source)//one :
 {
 
 }
 
 searchable_array_bag& searchable_array_bag::operator=(const searchable_array_bag& source)
 {
-	array_bag::operator = source; // copy all members from the base class (array_bag)
-	return (*this); // return the current object after assignment
+	if (this!= &source)//self check essential because of complex struct
+		array_bag::operator=(source);//call base class assignment operator// 
+	return (*this);
+	
 }
-
 
 bool searchable_array_bag::has(int n)const //checks if the int n exists or not
 {
@@ -28,4 +31,4 @@ bool searchable_array_bag::has(int n)const //checks if the int n exists or not
 }
 
 searchable_array_bag::~searchable_array_bag()
-{};
+{}

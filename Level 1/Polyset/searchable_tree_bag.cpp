@@ -1,4 +1,6 @@
 #include "searchable_tree_bag.hpp"
+#include <iostream>
+
 
 searchable_tree_bag::searchable_tree_bag()
 {
@@ -10,13 +12,14 @@ searchable_tree_bag::searchable_tree_bag(const searchable_tree_bag& source):tree
 
 }
 
-searchable_array_bag& searchable_array_bag::operator=(const searchable_tree_bag& source)
+searchable_tree_bag& searchable_tree_bag::operator=(const searchable_tree_bag& source)
 {
-	tree_bag::operator = source; //call the ebase class operator
+	if (this != &source) //self-check
+		tree_bag::operator =(source); //call the base class operator
 	return (*this);
 }
 
-bool searchable_tree_bag::search(const node* node, int value)
+bool searchable_tree_bag::search(node* node, int value) const
 {
 	if (node == nullptr)
 		return (false);
