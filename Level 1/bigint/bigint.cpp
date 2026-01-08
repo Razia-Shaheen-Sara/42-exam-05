@@ -32,7 +32,7 @@ std::ostream& operator<<(std::ostream& output, const bigint& obj)
 
 bigint& bigint::operator=(const bigint& source)
 {
-   this->str = source.str;//is it copying member?
+   this->str = source.str;//copying member
    return (*this); //"this" is always a pointer to the object whose member function is running.
                     //we dereference it and return the actual object
 }
@@ -167,14 +167,14 @@ unsigned int stringToUnit(std::string str)
 bigint bigint::operator<<(const bigint& second) const
 {
     bigint temp;
-    temp = (*this) << stringToUnit(second.str);
+    temp = (*this) << stringToUnit(second.str); //calling my operator<< function that takes an unsign int
     return (temp);
 }
 
 bigint bigint::operator>>(const bigint& second)const
 {
     bigint temp;
-    temp = *this >> stringToUnit(second.str);
+    temp = *this >> stringToUnit(second.str);//same as other
     return(temp);
 }
 

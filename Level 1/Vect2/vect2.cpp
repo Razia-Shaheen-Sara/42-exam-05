@@ -33,7 +33,7 @@ int vect2::operator[](int index)const //basically hard code who is first and who
 
 std::ostream& operator<<(std::ostream& output, const vect2& v) //Dont write const here
 {
-   output << "{" << v[0] << ", " << v[1] << "}" << std::endl;//copy from subject-- we need index operator
+   output << "{" << v[0] << ", " << v[1] << "}";//copy from subject-- we need index operator
    return (output);
 }
 //because operator<< receives a const vect2, it can only call the const version of operator[]
