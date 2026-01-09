@@ -34,7 +34,7 @@ int init_game(t_game* game, char**argv)
             free_board(game);
             return(-1);
         }
-        for (int j = 0; j < game->width; j++)
+        for (int j = 0; j < game->width; j++)//initialize whole board to dead
         {
             game->board[i][j]= ' ';
         }
@@ -98,10 +98,8 @@ void fill_board(t_game* game)
 int count_neighbours(t_game* game, int i, int j)
 {
     int count = 0; //alive neighbour count = 0
-    // Loop over row offsets (-1, 0, +1) relative to the current cell
     for (int di = -1; di < 2; di++)
     {
-        // Loop over column offsets (-1, 0, +1) relative to the current cell
         for (int dj = -1; dj < 2; dj++)
         {
             // Skip the cell itself; we only want neighbors
@@ -144,7 +142,7 @@ int play(t_game* game)
     // Loop over each cell of the board
     for (int i = 0; i < game->height; i++)
     {
-        for (int j = 0; j < game->width; j++)
+        for (int j = 0; j < game->width; j++)//count_neib
         {
              // Count the number of alive neighbors for the current cell
             int neighbours = count_neighbours(game, i, j);

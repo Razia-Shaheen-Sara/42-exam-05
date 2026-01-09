@@ -5,13 +5,14 @@
 // return on error: negative value (usually EOF); ... = variable arguments (like printf)
 //SEQUENCE
 // 1. line_
-// 2. check if line_len fields == 4
-// 3. set when line is <=0
+// 2. check if parsed fields == 4
+// 3. check if num_ ine is <=0
 // 4. chars are not same
 // 5,6,7. make sure char are printable (between 32 and 126)
 //test with a file using tab
 
-int load_elements(FILE* file,t_elements* elements)
+
+int load_elements(FILE* file,t_elements* elements)//Parse header
 {
     int parsed_fields = fscanf(file, "%d %c %c %c", &(elements->num_lines), &(elements->empty), &(elements->obstacle), &(elements->full));
     if (parsed_fields != 4)
@@ -100,8 +101,8 @@ int validate_map_chars(char** map, char c1, char c2)
 //6. use getline to // Skip the first line (header)
 //7. make a for loop to iterate through all rows(meaning map->height)
 //8. use getline to line_len into line_len and free line and map in case of failure
-//9. if line crosses  a '\n' char,  line_len-- meaning skip it
-//10. else (meaning no newline found) free and exit
+//9. remove trailing newline- why?Because getline includes \n. so:width comparison is correct map rows don’t contain \n
+//10. if empty line found in the middle-- free and exit
 //11. put the line in map->grid[i] using ft_substr and PROTECT substr
 //12. Store the length of first row (i = 0) (line_len) and set map->width.
 //13. for the nexts (else), if width does not match, ditch
@@ -110,7 +111,7 @@ int validate_map_chars(char** map, char c1, char c2)
 int load_map(FILE* file, t_map* map, t_elements* elements)
 {
     map->height = elements->num_lines;
-    map->grid = (char**)malloc((map->height + 1) * sizeof(char*)); //test with 3 brackets in the end
+    map->grid = (char**)malloc((map->height + 1) * sizeof(char*));
     if (!map->grid)
         return(-1);
     map->grid[map->height] = NULL; //mark the end of the array (so you can loop until NULL)
@@ -121,7 +122,7 @@ int load_map(FILE* file, t_map* map, t_elements* elements)
         free_map(map->grid);
         return (-1);
     }
-    for (int i = 0; i <map->height; i++)
+    for (int i = 0; i <map->height; i++)//getline-remove '\n'-
     {
         ssize_t line_len = getline(&line, &len, file);
         if (line_len == -1)
@@ -131,16 +132,10 @@ int load_map(FILE* file, t_map* map, t_elements* elements)
             free_map(map->grid);
             return (-1);
         }
-        if (line_len > 0 && line[line_len - 1] == '\n') //remove trailing newline if present
+        if (line_len > 0 && line[line_len - 1] == '\n') //remove trailing newline if present cause getline might have added it
             line_len--;
-        // For middle lines, empty line is invalid
-        // Last line can be empty if no newline
-        //i → index of the current row in the loop (0-based);
-        // map->height - 1 → index of the last row.
-        //line_len <= 0 means empty line after removing '\n'
-        if (line_len <= 0 && i != map->height - 1) 
+        if (line_len <= 0 && i != map->height - 1)//if empty line in the middle row--- exit
         {
-            puts("newline missing");
             free(line);
             free_map(map->grid);
             return(-1);
@@ -249,22 +244,18 @@ void print_filled_square(t_map* map, t_square* square, t_elements* element)
 //1. load_elements
 //2.load_map
 //3. find_biggst_square
+//4. print_filled_sq
+//5.free_map
 
 int execute_bsq(FILE* file)
 {
     t_elements elements;
     t_map map;
     t_square square;
-    if (load_elements(file, &elements) == -1)
-    {
-        puts("err: load elements");
+    if (load_elements(file, &elements) == -1)//parse header
         return (-1);
-    }
     if (load_map(file, &map, &elements) == -1)
-    {
-        puts("err: load_map");
         return (-1);
-    }
     square.size = 0; square.i = 0; square.j = 0;
     find_biggst_sq(&map, &square, &elements);
     print_filled_square(&map, &square, &elements);
@@ -274,11 +265,12 @@ int execute_bsq(FILE* file)
 
 int convert_file_pointer(char* name)
 {
+    // Open the file whose name is given (read-only mode) in FILE* file
     FILE* file = open(name, "r");
     if (!file) 
         return(-1);
     int ret = 0;
     ret = execute_bsq(file);
     fclose(file);
-    return (0);
+    return (ret);
 }
