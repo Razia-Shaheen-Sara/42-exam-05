@@ -1,0 +1,33 @@
+Assignment name  : largest_island
+Expected files   : largest_island.c
+Allowed functions: open, close, read, write, malloc, realloc, free, mmap, munmap, fstat
+--------------------------------------------------------------------------------
+
+Write a program that finds the size of the largest uninterrupted island
+in a 2D map.
+
+The map is provided as a file passed as argument to the program.
+
+An island is made of contiguous 'X' characters.
+Two 'X' characters are considered connected if they are adjacent
+horizontally or vertically.
+Diagonal connections are not allowed.
+
+The 2D map is composed only of the characters '.' and 'X'.
+
+Each line of the map represents a row of the 2D map.
+All rows must have the same length.
+
+If the map is invalid, the program must display:Map error\n
+
+If the map is valid, the program must display the size of the largest
+island followed by a newline.
+
+
+Example:
+
+Input file:
+....X..
+..XXX..
+...X...
+.......

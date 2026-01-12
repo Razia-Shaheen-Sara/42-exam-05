@@ -100,9 +100,9 @@ int validate_map_chars(char** map, char c1, char c2)
 //5. setup len for getline
 //6. use getline to // Skip the first line (header)
 //7. make a for loop to iterate through all rows(meaning map->height)
-//8. use getline to line_len into line_len and free line and map in case of failure
+////7.1. use getline to line_len into line_len and free line and map in case of failure
 //9. remove trailing newline- why?Because getline includes \n. so:width comparison is correct map rows don’t contain \n
-//10. if empty line found in the middle-- free and exit
+//10. If a row is empty (after removing '\n') and it's NOT the last row,the map is invalid (empty lines in the middle- not allowed)
 //11. put the line in map->grid[i] using ft_substr and PROTECT substr
 //12. Store the length of first row (i = 0) (line_len) and set map->width.
 //13. for the nexts (else), if width does not match, ditch
@@ -122,7 +122,7 @@ int load_map(FILE* file, t_map* map, t_elements* elements)
         free_map(map->grid);
         return (-1);
     }
-    for (int i = 0; i <map->height; i++)//getline-remove '\n'-
+    for (int i = 0; i <map->height; i++)//1.getline-2.remove his'\n'-3.check if middle empty-4.copy line in grid-5.set width
     {
         ssize_t line_len = getline(&line, &len, file);
         if (line_len == -1)
@@ -185,12 +185,12 @@ void find_biggst_sq(t_map* map, t_square* square, t_elements* elements)
     int matrix[map->height][map->width];
     for(int i = 0; i < map->height; i++)
     {
-        for(int j = 0; j < map->width; j++)
+        for(int j = 0; j < map->width; j++)//set all to zero
             matrix[i][j] = 0;
     }
-    for(int i = 0; i < map->height; i++)
+    for(int i = 0; i < map->height; i++)//iterate again
     {
-        for(int j = 0; j < map->width; j++)
+        for(int j = 0; j < map->width; j++)//1.make obstacle 0. 2.make first row and col==1 3.find min 4.increase min+1 5.update sq
         {
             if(map->grid[i][j] == elements->obstacle)
                 matrix[i][j] = 0; //obs cannot be part of square
@@ -207,7 +207,7 @@ void find_biggst_sq(t_map* map, t_square* square, t_elements* elements)
                 int min = find_min(matrix[i - 1][j], matrix[i - 1][j - 1], matrix[i][j - 1]);
                 matrix[i][j] = min + 1;
             }
-            if (matrix[i][j] > square-> size) //if current cell is bigger 
+            if (matrix[i][j] > square-> size) //if current cell is bigger than 
             {
                 //update square
                 square->size = matrix[i][j];
@@ -225,8 +225,8 @@ void print_filled_square(t_map* map, t_square* square, t_elements* element)
     {
         for(int j = square->j; j < square->j + square->size; j++)
         {
-            if ((i < map->height) && (j < map->width))
-                map->grid[i][j] = element->full;
+            if ((i < map->height) && (j < map->width)) 
+                map->grid[i][j] = element->full;///fill
         }
     }
     for (int i = 0; i < map->height; i++)
