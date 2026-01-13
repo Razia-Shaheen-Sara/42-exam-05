@@ -7,14 +7,13 @@
 char* read_file(int fd)
 {
     struct stat info;
-    if(fstat(fd,  info) < 0)
+    if(fstat(fd,  &info) < 0)
         return (NULL);
     char* str = malloc(info.st_size + 1);
     if (!str)
         return (NULL);
     ssize_t bytes_read = read(fd, str, info.st_size);
-    close(fd);//always close after reading
-    if(bytes_read <= 0)
+    if(bytes_read < 0)
     {
         free(str);
         return (NULL);
@@ -27,10 +26,10 @@ int count_rows(char* str)
     int rows = 0;
     for (int i = 0; str[i]!= 0; i++)
     {
-        if(str[i] == '\n')
+        if(str[i] == '\n' && str[i + 1] != '\0')
             rows++;
     }
-    return (rows);
+    return (rows + 1);
 }
 
 int count_col(char* str)
@@ -40,6 +39,7 @@ int count_col(char* str)
     i++;
     return(i);
 }
+
 char** make_grid(int row, int col)
 {
     char**grid = (char**)malloc(row * sizeof(char*));
@@ -60,6 +60,49 @@ char** make_grid(int row, int col)
     return (grid);
 }
 
+int fill_grid(char **grid, char *str, int max_row, int max_col)
+{
+    int i = 0; // Current row index
+    int j = 0; // Current column index
+
+    for (int k = 0; str[k] != '\0'; k++)
+    {
+        if (str[k] == '\n')// If we hit a newline(could be end of any line including last)
+        {
+            //if it is not the very end col
+            if (j != max_col) 
+                grid[i][j] = '\0'; // End the string for the current row
+            i++;//go to next row
+            j = 0;//reset
+            // If we've filled all rows, we stop (prevents errors from trailing newlines)
+            if (i == max_row)
+                return (0);
+        }
+        else //when no newline
+        {
+            // Only allow 'X' and '.'
+            if (str[k] != 'X' && str[k] != '.')
+                return (-1);
+            
+            // Check if we are still within the allocated grid space
+            if (i < max_row && j < max_col)
+            {
+                grid[i][j] = str[k];
+                j++;
+            }
+        }
+    }
+
+    // Handle the last line if the file didn't end with a '\n'
+    if (i < max_row && j > 0)
+    {
+        if (j != max_col)
+            return (-1);
+        grid[i][j] = '\0';
+    }
+    
+    return (0);
+}
 
 
 int flood_fill(char** grid, int row, int col, int i, int j)
@@ -122,7 +165,8 @@ int main(int argc, char**argv)
     if(!str)
     {
         close(fd);
-        write(1, "cannot open file\n", 17);
+        //free anything?
+        write(1, "cannot read file\n", 17);
         return(1);
     }
     int rows = count_rows(str);
@@ -130,20 +174,20 @@ int main(int argc, char**argv)
     char** grid = make_grid(rows, colm);
     if (!grid)
     {
+        free(str);
         write(1, "Map error\n", 10);
         return (1);
     }
-    if(fill_grid() < 0)
+    if(fill_grid(grid, str, rows, colm) < 0)
     {
         free(str);
-        free_grid()
+        //free_grid()?;
         write(1, "Map error\n", 10);
         return (1);
     }
-    
-    // int largest_island = execute_li(grid, rows, colm);
-    // ft_putnbr(largest_island);
-    // write(1, "\n", 1);
+    int largest_island = execute_li(grid, rows, colm);
+    ft_putnbr(largest_island);
+    write(1, "\n", 1);
     free(str);
     close(fd);
     return (0);
@@ -164,14 +208,14 @@ int main(int argc, char**argv)
 // O_TRUNC → truncate file to zero length
 // O_APPEND → append at the end
 
-// int fstat(int fd, struct stat *buf);
+// int fstat(int fd, struct stat *str);
 // fd → file descriptor (from open() or pipe())
-// buf → pointer to struct stat where file info will be stored
+// str → pointer to struct stat where file info will be stored
 // returns → 0 on success, -1 on error
 
 
-// ssize_t read(int fd, void *buf, size_t count);
+// ssize_t read(int fd, void *str, size_t count);
 // fd → file descriptor (from open())
-// buf → buffer where the data will be stored
+// str → buffer where the data will be stored
 // count → number of bytes to read
 // returns → number of bytes actually read, 0 if end of file, -1 on error
