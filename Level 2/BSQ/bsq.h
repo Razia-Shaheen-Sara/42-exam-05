@@ -27,7 +27,8 @@ typedef struct s_square
     int j;
 }t_square;
 
-int execute_bsq(FILE* file); 
+int execute_bsq(FILE* file);
+int convert_file_pointer(char* name);
 //FILE *file is a stream handle to where the map is coming from.
 //FILE is a library-defined "opaque" struct type(not a struct), used via pointer only
 //It lets the same function work for: file input and standard input both

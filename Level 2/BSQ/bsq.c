@@ -88,8 +88,16 @@ int validate_map_chars(char** map, char c1, char c2)
 //map->grid[i]= points to each row of the map
 //map->grid[0] → first row
 //map->grid[height - 1] → last row
+
+
 //ssize_t getline(char **lineptr, size_t *n, FILE *stream);
 //IMPORTANT: getline returns the number of characters including the newline if it exists.
+//   lineptr → address of buffer (allocated/expanded by getline)
+//   n       → address of buffer size
+//   stream  → FILE* to read from
+// return:
+//   >= 0    → number of chars read (including '\n')
+//   -1      → error or EOF
 
 
 //SEQUENCE:
@@ -117,11 +125,13 @@ int load_map(FILE* file, t_map* map, t_elements* elements)
     map->grid[map->height] = NULL; //mark the end of the array (so you can loop until NULL)
     char* line = NULL;
     size_t len = 0;
-    if (getline(&line, &len, file) == -1)// Skip the first line (header)
-    {
-        free_map(map->grid);
-        return (-1);
-    }
+    ssize_t r = getline(&line, &len, file);
+    printf("FIRST getline: [%s] len=%zd\n", line, r);
+    // if (getline(&line, &len, file) == -1)// Skip the first line (header)
+    // {
+    //     free_map(map->grid);
+    //     return (-1);
+    // }
     for (int i = 0; i <map->height; i++)//1.getline-2.remove his'\n'-3.check if middle empty-4.copy line in grid-5.set width
     {
         ssize_t line_len = getline(&line, &len, file);
@@ -266,7 +276,7 @@ int execute_bsq(FILE* file)
 int convert_file_pointer(char* name)
 {
     // Open the file whose name is given (read-only mode) in FILE* file
-    FILE* file = open(name, "r");
+    FILE* file = fopen(name, "r");
     if (!file) 
         return(-1);
     int ret = 0;
@@ -274,3 +284,10 @@ int convert_file_pointer(char* name)
     fclose(file);
     return (ret);
 }
+
+
+// FILE *fopen(const char *pathname, const char *mode);
+// pathname → file name
+// mode → "r", "w", "a", etc.
+// returns FILE * on success
+// returns NULL on failure
