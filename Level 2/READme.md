@@ -1,43 +1,57 @@
-# 🟢 Grid Algorithm
+# 🟢 Grid Algorithms: Visual Guide
 
-Legend:
-- `X` = land / alive / usable
-- `.` = water / dead / blocked
-- `*` = visited / counted (Flood Fill)
-- Numbers = DP values (BSQ)
-- `1` / `0` = alive / dead (Game of Life)
-
-Original Map:
-
-. X . . .
-X X X . .
-. X . X .
-. . . X X
-X . . X .
+A quick-reference guide for common grid-based problems. Use this to distinguish between connectivity, optimization, and simulation logic.
 
 ---
 
-# Side-by-side visualization
-
-Flood Fill        DP (BSQ)          Game of Life
-. * . . .         1 1 1 1 1         0 1 0 0 0
-* * * . .         1 2 2 2 2         1 1 1 0 0
-. * . X .         1 2 3 3 3         1 1 1 1 1
-. . . X X         1 2 3 4 4         0 1 1 1 1
-X . . X .         1 2 3 4 5         0 1 0 1 0
-
+### 🗺️ Legend
+| Symbol | Meaning | Context |
+| :--- | :--- | :--- |
+| `X` / `.` | Land / Water | Original Map |
+| `*` | Visited / Counted | **Flood Fill** (Connectivity) |
+| `n` | Max Square Size | **DP / BSQ** (Optimization) |
+| `1` / `0` | Alive / Dead | **Game of Life** (Simulation) |
 
 ---
 
-# Quick Notes
+### 📊 Side-by-Side Visualization
 
-- **Flood Fill:** paint bucket → start at one X → mark all connected → count size  
-- **DP (BSQ):** stacking blocks → each cell = 1 + min(top, left, top-left) → largest square size  
-- **Simulation (Game of Life):** everyone acts at once → check neighbors → update new grid simultaneously  
+#### 1. Flood Fill (DFS/BFS)
+*Identifies connected components. Once an `X` is found, "bleed" into neighbors.*
+```text
+  0 1 2 3 4
+0 . * . . .
+1 * * * . .
+2 . * . X .
 
-Memory Tips for Exams:
-- Flood fill → *spread outward from start*  
-- DP → *build on previous results*  
-- Simulation → *apply rules to every cell at once*
+2. DP: Biggest Square (BSQ)Calculates the side length of the largest square ending at (i, j).Plaintext  0 1 2 3 4
+```text
+0 1 1 1 1 1
+1 1 2 2 2 2
+2 1 2 3 3 3
 
+3. Simulation (Game of Life)State changes based on neighbor counts. Requires a buffer (don't update in-place).Plaintext  0 1 2 3 4
+```text
+0 0 1 0 0 0
+1 1 1 1 0 0
+2 0 1 0 1 0
+
+#### Core Logic & Formulas:
+Flood Fill (Connectivity)Goal: Count islands or fill areas.
+Mechanism: Spread outward from a seed point.
+Memory Tip: Uses a visited set or modifies the grid in-place to avoid infinite loops.
+
+Dynamic Programming (Optimization)Goal: Find the Largest Square of 1s.
+Formula: $$dp[i][j] = 1 + \min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1])
+$$Memory Tip: You only need the current and previous row to optimize space.
+
+Simulation (State Change)Goal: Predict the next generation.
+Mechanism: Every cell checks its 8 neighbors simultaneously.
+Memory Tip: Always use a copy of the grid; updating a cell immediately will "pollute" the calculation for its neighbors.
+
+
+🎓 Exam Cheat SheetSpread Outward? 
+→ Flood Fill / BFS.Build on Neighbors? 
+→ DP (BSQ / Pathfinding).Tick-based Evolution? 
+→ Simulation (Game of Life).
 
