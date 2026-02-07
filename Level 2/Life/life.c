@@ -13,7 +13,7 @@ void free_board(t_game* game)//getting the whole game because i also need height
     }
 }
 
-int init_game(t_game* game, char**argv)
+int init_game(t_game* game, char**argv) //kill all in the beginnning
 {
     game->width = atoi(argv[1]);
     game->height = atoi(argv[2]);
@@ -44,7 +44,7 @@ int init_game(t_game* game, char**argv)
 }
 
 //ssize_t read(int fd, void *buf, size_t count);
-//switch (buffer)
+//switch (c)
 //Checks which key was pressed: and decides whether to move depending on BOUNDS
 //THINK BOUNDS: i is up-down; j = left-right
 //'w' →  up (i--)
@@ -53,14 +53,14 @@ int init_game(t_game* game, char**argv)
 //'d' → right (j++)
 //'x' → draw mode (on/off)
 
-void fill_board(t_game* game)
+void fill_board(t_game* game) //only alive if flag is 0 and draw mode on
 {
-    char buffer;
+    char c;
     int flag;
-    while (read(STDIN_FILENO, &buffer, 1) == 1)//Reads one character from stdin into buffer.
+    while (read(STDIN_FILENO, &c, 1) == 1)//Reads one character from stdin into  buffer c.
     {
         flag = 0;
-        switch (buffer)//checks which key was pressed
+        switch (c)//checks which key was pressed
         {
             case 'w':
                 if(game->i > 0)
@@ -86,7 +86,7 @@ void fill_board(t_game* game)
                 break;
         }
         //out of switch but inside while
-        //if draw mode on and flag is 0 --- if everythings within bounds-- write
+        //if draw mode on and flag is 0 --- if game->i and game->j within bounds-- then game->alive
         if(game->draw && (flag == 0))
         {
             if((game->i >= 0) && (game->i < game-> height) && (game->j >= 0) && (game->j < game->width))
@@ -98,7 +98,7 @@ void fill_board(t_game* game)
 int count_neighbours(t_game* game, int i, int j)
 {
     int count = 0; //alive neighbour count = 0
-    for (int di = -1; di < 2; di++)
+    for (int di = -1; di < 2; di++)//nested(2)
     {
         for (int dj = -1; dj < 2; dj++)
         {
@@ -133,14 +133,14 @@ int play(t_game* game)
         if (!temp[i])
         {
             // Free all previously allocated rows of temp
-            for(int k= 0; k < i; k++)
+            for(int k = 0; k < i; k++)
                 free(temp[k]);
             free(temp);
             return(-1);  
         }
     }
     // Loop over each cell of the board
-    for (int i = 0; i < game->height; i++)
+    for (int i = 0; i < game->height; i++)//nested(1)
     {
         for (int j = 0; j < game->width; j++)//count_neib
         {
@@ -174,7 +174,7 @@ int play(t_game* game)
 
 void print_board(t_game* game)
 {
-    for(int i = 0; i < game->height; i++)
+    for(int i = 0; i < game->height; i++)//nested(3)
     {
         for(int j = 0; j < game->width; j++)
         {

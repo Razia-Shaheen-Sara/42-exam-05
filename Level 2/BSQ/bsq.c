@@ -71,7 +71,7 @@ char* ft_substr(char* given_str, int start, int len)
 int validate_map_chars(char** map, char c1, char c2)
 {
     int i = 0;
-    while (map[i])
+    while (map[i])//my nested (1)
     {
         int j = 0;
         while(map[i][j] != '\0')
@@ -106,7 +106,7 @@ int validate_map_chars(char** map, char c1, char c2)
 //3. mark the end as null
 //4. initialize a string to store lines from getline
 //5. setup len for getline
-//6. use getline to // Skip the first line (header)
+//6. use getline to // Skip the newline leftover from fscanf
 //7. make a for loop to iterate through all rows(meaning map->height)
 ////7.1. use getline to line_len into line_len and free line and map in case of failure
 //9. remove trailing newline- why?Because getline includes \n. so:width comparison is correct map rows don’t contain \n
@@ -125,13 +125,11 @@ int load_map(FILE* file, t_map* map, t_elements* elements)
     map->grid[map->height] = NULL; //mark the end of the array (so you can loop until NULL)
     char* line = NULL;
     size_t len = 0;
-    ssize_t r = getline(&line, &len, file);
-    printf("FIRST getline: [%s] len=%zd\n", line, r);
-    // if (getline(&line, &len, file) == -1)// Skip the first line (header)
-    // {
-    //     free_map(map->grid);
-    //     return (-1);
-    // }
+    if (getline(&line, &len, file) == -1)// Skip the leftover newline
+    {
+        free_map(map->grid);
+        return (-1);
+    }
     for (int i = 0; i <map->height; i++)//1.getline-2.remove his'\n'-3.check if middle empty-4.copy line in grid-5.set width
     {
         ssize_t line_len = getline(&line, &len, file);
@@ -189,16 +187,16 @@ int find_min(int n1, int n2, int n3)
     return (min);
 }
 
-void find_biggst_sq(t_map* map, t_square* square, t_elements* elements)
+void find_biggst_sq(t_map* map, t_square* square, t_elements* elements)//THE DP ALGORITHM!!
 {
     // Create a DP matrix/shadow map with same dimensions as map and set ALL to 0
     int matrix[map->height][map->width];
-    for(int i = 0; i < map->height; i++)
+    for(int i = 0; i < map->height; i++)//nested loop(2)
     {
         for(int j = 0; j < map->width; j++)//set all to zero
             matrix[i][j] = 0;
     }
-    for(int i = 0; i < map->height; i++)//iterate again
+    for(int i = 0; i < map->height; i++)//iterate again //nested loop(3)
     {
         for(int j = 0; j < map->width; j++)//1.make obstacle 0. 2.make first row and col==1 3.find min 4.increase min+1 5.update sq
         {
@@ -208,13 +206,7 @@ void find_biggst_sq(t_map* map, t_square* square, t_elements* elements)
                 matrix[i][j] = 1; 
             else
             {
-                //For any cell (i, j) where i>0 and j>0, the value is min(top, left, top\_left) + 1.
-                //matrix[i][j] = current cell
-                //matrix[i - 1][j] → the cell directly above the current one.
-                // matrix[i - 1][j - 1] → the cell diagonally above-left.
-                // matrix[i][j - 1] → the cell directly to the left.
-                //send neighbouring cells
-                int min = find_min(matrix[i - 1][j], matrix[i - 1][j - 1], matrix[i][j - 1]);
+                int min = find_min(matrix[i - 1][j], matrix[i - 1][j - 1], matrix[i][j - 1]);//top, left and top-left
                 matrix[i][j] = min + 1;
             }
             if (matrix[i][j] > square-> size) //if current cell is bigger than 
@@ -229,9 +221,18 @@ void find_biggst_sq(t_map* map, t_square* square, t_elements* elements)
     }
 }
 
+                
+                //else -explanation
+                //For any cell (i, j) where i>0 and j>0, the value is min(top, left, top\_left) + 1.
+                //matrix[i][j] = current cell
+                //matrix[i - 1][j] → the cell directly above the current one.
+                // matrix[i - 1][j - 1] → the cell diagonally above-left.
+                // matrix[i][j - 1] → the cell directly to the left.
+                //send neighbouring cells
+
 void print_filled_square(t_map* map, t_square* square, t_elements* element)
 {
-    for (int i = square->i; i < square->i + square->size; i++)
+    for (int i = square->i; i < square->i + square->size; i++)//my mested loop(4)
     {
         for(int j = square->j; j < square->j + square->size; j++)
         {

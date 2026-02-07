@@ -15,11 +15,11 @@ int main(int argc, char *argv[])
     }
     else
     {
-        for( int i = 1; i < argc; i++)
+        for( int i = 1; i < argc; i++)//convert and add newline
         {
             if(convert_file_pointer(argv[i]) == -1)
                 fprintf(stderr, "map_error");
-            if(i < argc - 1)
+            if(i < argc)
                 fprintf(stdout, "\n");
         }
     }
