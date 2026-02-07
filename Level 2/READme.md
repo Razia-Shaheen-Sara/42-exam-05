@@ -16,13 +16,14 @@ A quick-reference guide for common grid-based problems. Use this to distinguish 
 
 ### 📊 Side-by-Side Visualization
 
-| Flood Fill       | DP (BSQ)        | Game of Life      |
-| :-------------- | :-------------- | :----------------|
-| . * . . .       | 1 1 1 1 1       | 0 1 0 0 0        |
-| * * * . .       | 1 2 2 2 2       | 1 1 1 0 0        |
-| . * . X .       | 1 2 3 3 3       | 1 1 1 1 1        |
-| . . . X X       | 1 2 3 4 4       | 0 1 1 1 1        |
-| X . . X .       | 1 2 3 4 5       | 0 1 0 1 0        |
+| Original Map | Flood Fill       | DP (BSQ)        | Game of Life    |
+| :----------- | :-------------- | :-------------- | :-------------- |
+| . X . . .    | . * . . .       | 1 1 1 1 1       | 0 1 0 0 0      |
+| X X X . .    | * * * . .       | 1 2 2 2 2       | 1 1 1 0 0      |
+| . X . X .    | . * . X .       | 1 2 3 3 3       | 1 1 1 1 1      |
+| . . . X X    | . . . X X       | 1 2 3 4 4       | 0 1 1 1 1      |
+| X . . X .    | X . . X .       | 1 2 3 4 5       | 0 1 0 1 0      |
+
 
 ---
 
