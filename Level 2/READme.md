@@ -36,5 +36,9 @@ A quick-reference guide for common grid-based problems. Use this to distinguish 
 **Dynamic Programming (Optimization)**  
 - **Goal:** Find the largest square of `1`s  
 - **Formula:**  
-```text
 dp[i][j] = 1 + min(dp[i-1][j], dp[i][j-1], dp[i-1][j-1])
+
+**Simulation (State Change)**
+- **Goal:** Update the grid based on the previous state.
+- **Formula:**  Every cell checks its 8 neighbors.
+- **Tip:**Never update in-place. Use a temporary grid to store new values, then swap
