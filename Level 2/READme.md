@@ -4,19 +4,18 @@ A quick-reference guide for common grid-based problems. Use this to distinguish 
 
 ---
 
-### 🗺️ Legend
-| Symbol   | Meaning         | Context |
-| :------- | :------------- | :------ |
-| `X` / `.`| Land / Water   | Original Map |
+| Symbol   | Meaning           | Context      |
+| :------- | :-------------    | :------      |
+| `X` / `.`| Land / Water      | Original Map |
 | `*`      | Visited / Counted | **Flood Fill** (Connectivity) |
-| `n`      | Max Square Size   | **DP / BSQ** (Optimization) |
-| `1` / `0`| Alive / Dead      | **Game of Life** (Simulation) |
+| `n`      | Max Square Size   | **DP / BSQ** (largest square) |
+| `1` / `0`| Alive / Dead      | **Game of Life** (change by neibr)|
 
 ---
 
 ### 📊 Side-by-Side Visualization
 
-| Original Map | Flood Fill       | DP (BSQ)        | Game of Life    |
+| Original Map | largest isld(FF)| DP (BSQ)        | Game of Life    |
 | :----------- | :-------------- | :-------------- | :-------------- |
 | . X . . .    | . * . . .       | 1 1 1 1 1       | 0 1 0 0 0      |
 | X X X . .    | * * * . .       | 1 2 2 2 2       | 1 1 1 0 0      |
@@ -24,15 +23,14 @@ A quick-reference guide for common grid-based problems. Use this to distinguish 
 | . . . X X    | . . . X X       | 1 2 3 4 4       | 0 1 1 1 1      |
 | X . . X .    | X . . X .       | 1 2 3 4 5       | 0 1 0 1 0      |
 
-
 ---
 
 ### ⚙️ Core Logic & Formulas
 
 **Flood Fill (Connectivity)**  
-- **Goal:** Count islands or fill areas  
+- **Goal:** find largest connected area
 - **Mechanism:** Spread outward from a seed point  
-- **Memory Tip:** Use a visited set or modify the grid in-place  
+- **Memory Tip:** Use a visited indicator 
 
 **Dynamic Programming (Optimization)**  
 - **Goal:** Find the largest square of `1`s  

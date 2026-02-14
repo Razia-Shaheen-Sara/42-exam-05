@@ -188,7 +188,7 @@ int main(int argc, char**argv)
 {
     if(argc != 4)
         return (1);
-    t_game game;
+    t_game game;//just make a game, no poiter to anything
     if(init_game(&game, argv)== -1)//send game ref and argv
         return(1);
     fill_board(&game);
