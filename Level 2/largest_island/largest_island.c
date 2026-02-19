@@ -92,7 +92,7 @@ int fill_grid(char **grid, char *str, int max_row, int max_col)
     int i = 0; // Current height index
     int j = 0; // Current column index
 
-    for (int k = 0; str[k] != '\0'; k++)
+    for (int k = 0; str[k] != '\0'; k++)//iterating through string again
     {
         if (str[k] == '\n')// If we hit a newline(could be end of any line including last)
         {
@@ -192,7 +192,6 @@ int main(int argc, char**argv)
     if(!str)
     {
         close(fd);
-        //free anything?
         write(1, "cannot read file\n", 17);
         return(1);
     }
@@ -203,12 +202,14 @@ int main(int argc, char**argv)
     {
         free(str);
         write(1, "Map error\n", 10);
+        close(fd);
         return (1);
     }
     if(fill_grid(grid, str, height, width) < 0)
     {
         free(str);
         free_grid(grid, height);
+        close(fd);
         write(1, "Map error\n", 10);
         return (1);
     }
@@ -216,6 +217,7 @@ int main(int argc, char**argv)
     ft_putnbr(largest_island);
     write(1, "\n", 1);
     free(str);
+    free_grid(grid, height);
     close(fd);
     return (0);
 }
