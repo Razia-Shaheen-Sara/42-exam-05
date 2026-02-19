@@ -1,6 +1,5 @@
 #include "bsq.h"
 
-
 //int fscanf(FILE *stream, const char *format, ...);return value = number of items written/line_len; 
 // return on error: negative value (usually EOF); ... = variable arguments (like printf)
 //SEQUENCE
@@ -9,12 +8,12 @@
 // 3. check if num_ ine is <=0
 // 4. chars are not same
 // 5,6,7. make sure char are printable (between 32 and 126)
-//test with a file using tab
+//test with a input using tab
 
 
-int load_elements(FILE* file,t_elements* elements)//Parse header
+int load_elements(FILE* input,t_elements* elements)//Parse header
 {
-    int parsed_fields = fscanf(file, "%d %c %c %c", &(elements->num_lines), &(elements->empty), &(elements->obstacle), &(elements->full));
+    int parsed_fields = fscanf(input, "%d %c %c %c", &(elements->num_lines), &(elements->empty), &(elements->obstacle), &(elements->full));
     if (parsed_fields != 4)
         return (-1);
     if (elements->num_lines <= 0)
@@ -116,33 +115,32 @@ int validate_map_chars(char** map, char c1, char c2)
 //13. for the nexts (else), if width does not match, ditch
 //14. validate map chars by sending grid, empty and obstacles
 
-int load_map(FILE* file, t_map* map, t_elements* elements)
+int load_map(FILE* input, t_map* map, t_elements* elements)
 {
     map->height = elements->num_lines;
-    map->grid = (char**)malloc((map->height + 1) * sizeof(char*));
+    map->grid = (char**)malloc((map->height + 1) * sizeof(char*));//****height+1 must needed for NULL****
     if (!map->grid)
         return(-1);
-    map->grid[map->height] = NULL; //mark the end of the array (so you can loop until NULL)
+    map->grid[map->height] = NULL; //***mark the end of the array (so you can loop until NULL)***
     char* line = NULL;
     size_t len = 0;
-    if (getline(&line, &len, file) == -1)// Skip the leftover newline
+    if (getline(&line, &len, input) == -1)// Skip the leftover newline from the header line
     {
         free_map(map->grid);
         return (-1);
     }
-    for (int i = 0; i <map->height; i++)//1.getline-2.remove his'\n'-3.check if middle empty-4.copy line in grid-5.set width
+    for (int i = 0; i <map->height; i++)//1.getline-2.remove his'\n'-3.check if middle empty-4.copy line in grid-5.set width 6.check width
     {
-        ssize_t line_len = getline(&line, &len, file);
+        ssize_t line_len = getline(&line, &len, input);
         if (line_len == -1)
         {
-            puts("getline failed");
             free(line);//free it cause getline allocated it for me
             free_map(map->grid);
             return (-1);
         }
-        if (line_len > 0 && line[line_len - 1] == '\n') //remove trailing newline if present cause getline might have added it
+        if (line_len > 0 && line[line_len - 1] == '\n') //remove \n so width is correct
             line_len--;
-        if (line_len <= 0 && i != map->height - 1)//if empty line in the middle row--- exit
+        if (line_len <= 0 && i != map->height - 1)//forbid empty line in the middle row but tolerate at last index
         {
             free(line);
             free_map(map->grid);
@@ -155,11 +153,11 @@ int load_map(FILE* file, t_map* map, t_elements* elements)
             free_map(map->grid);
             return(-1);
         }
-        if (i == 0) //for the first row
+        if (i == 0) //in the first iteration
             map->width = line_len; //set the width
-        else //for all other rows
+        else //for all other rows in the next iterations
         {
-            if (map->width != line_len)//not the same width?
+            if (map->width != line_len)//invalidate other line_len 
             {
                 free(line);
                 free_map(map->grid);
@@ -173,7 +171,7 @@ int load_map(FILE* file, t_map* map, t_elements* elements)
         free_map(map->grid);
         return(-1);
     }
-    free(line);
+    free(line);//use of line ended 
     return (0);
 }
 
@@ -221,14 +219,7 @@ void find_biggst_sq(t_map* map, t_square* square, t_elements* elements)//THE DP 
     }
 }
 
-                
-                //else -explanation
-                //For any cell (i, j) where i>0 and j>0, the value is min(top, left, top\_left) + 1.
-                //matrix[i][j] = current cell
-                //matrix[i - 1][j] → the cell directly above the current one.
-                // matrix[i - 1][j - 1] → the cell diagonally above-left.
-                // matrix[i][j - 1] → the cell directly to the left.
-                //send neighbouring cells
+//Grow the smallest sq
 
 void print_filled_square(t_map* map, t_square* square, t_elements* element)
 {
@@ -240,17 +231,14 @@ void print_filled_square(t_map* map, t_square* square, t_elements* element)
                 map->grid[i][j] = element->full;///fill
         }
     }
-    for (int i = 0; i < map->height; i++)
+    for (int i = 0; i < map->height; i++)// print each line by fputs
     {
         fputs(map->grid[i], stdout);
         fputc('\n', stdout);
     }
 }
 
-//FILE *file is a stream handle to where the map is coming from.
-//FILE is a library-defined "opaque" struct type(not a struct), used via pointer only
-//It lets the same function work for: file input and standard input both
-//It can point to: a file opened with fopen(), stdin, stdout / stderr
+
 //SEQUENCE:
 //1. load_elements
 //2.load_map
@@ -258,14 +246,14 @@ void print_filled_square(t_map* map, t_square* square, t_elements* element)
 //4. print_filled_sq
 //5.free_map
 
-int execute_bsq(FILE* file)
+int execute_bsq(FILE* input)
 {
     t_elements elements;
     t_map map;
     t_square square;
-    if (load_elements(file, &elements) == -1)//parse header
+    if (load_elements(input, &elements) == -1)//parse header
         return (-1);
-    if (load_map(file, &map, &elements) == -1)
+    if (load_map(input, &map, &elements) == -1)
         return (-1);
     square.size = 0; square.i = 0; square.j = 0;
     find_biggst_sq(&map, &square, &elements);
@@ -274,21 +262,26 @@ int execute_bsq(FILE* file)
     return(0);
 }
 
-int convert_file_pointer(char* name)
+int convert_file_pointer(char* given_file)
 {
-    // Open the file whose name is given (read-only mode) in FILE* file
-    FILE* file = fopen(name, "r");
-    if (!file) 
+    // Open the given_file (read-only mode) in FILE* input
+    FILE* input = fopen(given_file, "r");
+    if (!input) 
         return(-1);
     int ret = 0;
-    ret = execute_bsq(file);
-    fclose(file);
+    ret = execute_bsq(input);
+    fclose(input);
     return (ret);
 }
 
+//FILE* is a stream handle to where the map is coming from.
+//FILE is a library-defined "opaque" struct type(not a struct), used via pointer only
+//It lets the same function work for: input input and standard input both
+//It can point to: a input opened with fopen(), stdin, stdout / stderr
 
-// FILE *fopen(const char *pathname, const char *mode);
-// pathname → file name
+
+// FILE* fopen(const char *pathname, const char *mode);
+// pathname → input given_file
 // mode → "r", "w", "a", etc.
 // returns FILE * on success
 // returns NULL on failure

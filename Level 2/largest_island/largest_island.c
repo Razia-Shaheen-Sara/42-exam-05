@@ -4,6 +4,12 @@
 #include <sys/stat.h>
 #include <stdlib.h>
 
+
+//struct stat info; is a structure that holds metadata about a file
+//when used in fstat(), the info struct gets filled with details about the file referred to by the file descriptor fd. 
+//This metadata is not the file’s contents, just information about the file itself. Some useful fields in struct stat are:
+//info.st_size → size of the file in bytes. You use this to know how much memory to allocate before reading the file.
+
 char* read_file(int fd)
 {
     struct stat info;
@@ -21,60 +27,81 @@ char* read_file(int fd)
     str[bytes_read] = '\0';
     return (str);
 }
-int count_rows(char* str)
+
+int count_rows(char *str)
 {
-    int rows = 0;
-    for (int i = 0; str[i]!= 0; i++)
+    if (!str || *str == '\0') // empty string/file
+        return 0;
+
+    int height = 0;
+    int i = 0;
+    while (str[i] != '\0')
     {
-        if(str[i] == '\n' && str[i + 1] != '\0')
-            rows++;
+        if (str[i] == '\n')
+            height++;
+        i++;
     }
-    return (rows + 1);
+    // If the last character is NOT a newline, count the last line
+    if (i > 0 && str[i - 1] != '\n')
+        height++;
+
+    return height;
 }
 
 int count_col(char* str)
 {
     int i = 0;
-    while(str[i]!= 0 && str[i]!= '\n')
+    while(str[i]!= '\0' && str[i]!= '\n')
     i++;
     return(i);
 }
 
-char** make_grid(int row, int col)
+void free_grid(char** grid, int height)
 {
-    char**grid = (char**)malloc(row * sizeof(char*));
+    if (grid)
+    {
+        for(int i = 0; i < height; i++)
+        {
+            if(grid[i])
+                free(grid[i]);
+        }
+        free(grid);
+        grid = NULL;
+    }
+}
+
+char** make_grid(int height, int width)
+{
+    char**grid = (char**)malloc(height * sizeof(char*));
     if (!grid)
         return (NULL);
-    for (int i = 0; i < row; i++)
+    for (int i = 0; i < height; i++)
     {
-        grid[i] = (char*)malloc(col + 1);//Each row gets cols + 1 for null terminator
+        grid[i] = (char*)malloc(width + 1);//Each height gets cols + 1 for null terminator
         if (!grid[i])
         {  
-            for(int j = 0; j < i; j++)
-                free(grid[j]);
-            free(grid);
+            free_grid(grid, height);
             return(NULL);
         }
-
     }
     return (grid);
 }
 
 int fill_grid(char **grid, char *str, int max_row, int max_col)
 {
-    int i = 0; // Current row index
+    int i = 0; // Current height index
     int j = 0; // Current column index
 
     for (int k = 0; str[k] != '\0'; k++)
     {
         if (str[k] == '\n')// If we hit a newline(could be end of any line including last)
         {
-            //if it is not the very end col
+            //if it is not the very end width
             if (j != max_col) 
-                grid[i][j] = '\0'; // End the string for the current row
-            i++;//go to next row
+                grid[i][j] = '\0'; // End the string for the current height
+            i++;//go to next height
             j = 0;//reset
-            // If we've filled all rows, we stop (prevents errors from trailing newlines)
+            // If we've filled all height, we stop (prevents errors from trailing newlines)
             if (i == max_row)
                 return (0);
         }
@@ -105,33 +132,33 @@ int fill_grid(char **grid, char *str, int max_row, int max_col)
 }
 
 
-int flood_fill(char** grid, int row, int col, int i, int j)
+int flood_fill(char** grid, int height, int width, int i, int j)
 {
-    if(i < 0 || i >= row || j < 0 || j >= col)//bound check
+    if(i < 0 || i >= height || j < 0 || j >= width)//bound check
         return (0);
     if(grid[i][j] != 'X')//make sure to process only given char
         return (0);
     grid[i][j] = '*';//mark
     int count = 1;
-    count += flood_fill(grid, row, col, i + 1, j); //down
-    count += flood_fill(grid, row, col, i - 1, j); //up
-    count += flood_fill(grid, row, col, i, j - 1); //left
-    count += flood_fill(grid, row, col, i, j + 1); //right
+    count += flood_fill(grid, height, width, i + 1, j); //down
+    count += flood_fill(grid, height, width, i - 1, j); //up
+    count += flood_fill(grid, height, width, i, j - 1); //left
+    count += flood_fill(grid, height, width, i, j + 1); //right
     return(count);
 
 }
 
-int execute_li(char**grid, int row, int col)
+int execute_li(char**grid, int height, int width)
 {
     int max_island = 0;
     int size = 0;
-    for (int i = 0; i < row; i++) //nested
+    for (int i = 0; i < height; i++) //nested
     {
-        for(int j = 0; j < col; j++)
+        for(int j = 0; j < width; j++)
         {
             if(grid[i][j] == 'X')// run flood fill from this cell and update maximum island size
             {
-                size = flood_fill(grid, row, col, i, j);
+                size = flood_fill(grid, height, width, i, j);
                 if(size > max_island)//check biggest and update
                     max_island = size;
             }       
@@ -169,23 +196,23 @@ int main(int argc, char**argv)
         write(1, "cannot read file\n", 17);
         return(1);
     }
-    int rows = count_rows(str);
-    int colm = count_col(str);
-    char** grid = make_grid(rows, colm);
+    int height = count_rows(str);
+    int width = count_col(str);
+    char** grid = make_grid(height, width);
     if (!grid)
     {
         free(str);
         write(1, "Map error\n", 10);
         return (1);
     }
-    if(fill_grid(grid, str, rows, colm) < 0)
+    if(fill_grid(grid, str, height, width) < 0)
     {
         free(str);
-        //free_grid()?;
+        free_grid(grid, height);
         write(1, "Map error\n", 10);
         return (1);
     }
-    int largest_island = execute_li(grid, rows, colm);
+    int largest_island = execute_li(grid, height, width);
     ft_putnbr(largest_island);
     write(1, "\n", 1);
     free(str);

@@ -26,7 +26,7 @@ int init_game(t_game* game, char**argv) //kill all in the beginnning
     game->board = (char**)malloc(game->height * sizeof(char*));
     if (!game->board)
         return (-1);
-    for (int i = 0; i < game->height; i++)
+    for (int i = 0; i < game->height; i++)// 2 purpose
     {
         game->board[i] = (char*)malloc(game->width * sizeof(char));
         if(!game->board[i])
@@ -53,13 +53,13 @@ int init_game(t_game* game, char**argv) //kill all in the beginnning
 //'d' → right (j++)
 //'x' → draw mode (on/off)
 
-void fill_board(t_game* game) //only alive if flag is 0 and draw mode on
+void fill_board(t_game* game) //only alive if is_valid_cmd is 0 and draw mode on
 {
     char c;
-    int flag;
+    int is_valid_cmd;
     while (read(STDIN_FILENO, &c, 1) == 1)//Reads one character from stdin into  buffer c.
     {
-        flag = 0;
+        is_valid_cmd = 0;
         switch (c)//checks which key was pressed
         {
             case 'w':
@@ -82,12 +82,12 @@ void fill_board(t_game* game) //only alive if flag is 0 and draw mode on
                 game->draw = !game->draw; //just flip
                 break;
             default:
-                flag = 1;
+                is_valid_cmd = 1;
                 break;
         }
         //out of switch but inside while
-        //if draw mode on and flag is 0 --- if game->i and game->j within bounds-- then game->alive
-        if(game->draw && (flag == 0))
+        //if draw mode on and is_valid_cmd is 0 --- if game->i and game->j within bounds-- then game->alive
+        if(game->draw && (is_valid_cmd == 0))
         {
             if((game->i >= 0) && (game->i < game-> height) && (game->j >= 0) && (game->j < game->width))
                 game->board[game->i][game->j] = game->alive;
