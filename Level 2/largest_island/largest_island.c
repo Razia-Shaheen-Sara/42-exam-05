@@ -41,6 +41,9 @@ int count_rows(char *str)
             height++;
         i++;
     }
+    //i = length of the string
+    //str[i] = '\0'
+    //str[i - 1] = last real character of file
     // If the last character is NOT a newline, count the last line
     if (i > 0 && str[i - 1] != '\n')
         height++;
@@ -89,45 +92,32 @@ char** make_grid(int height, int width)
 
 int fill_grid(char **grid, char *str, int max_row, int max_col)
 {
-    int i = 0; // Current height index
-    int j = 0; // Current column index
+    int k = 0;
 
-    for (int k = 0; str[k] != '\0'; k++)//iterating through string again
+    for (int i = 0; i < max_row; i++)
     {
-        if (str[k] == '\n')// If we hit a newline(could be end of any line including last)
+        for (int j = 0; j < max_col; j++)
         {
-            //if it is not the very end width
-            if (j != max_col) 
-                grid[i][j] = '\0'; // End the string for the current height
-            i++;//go to next height
-            j = 0;//reset
-            // If we've filled all height, we stop (prevents errors from trailing newlines)
-            if (i == max_row)
-                return (0);
-        }
-        else //when no newline
-        {
-            // Only allow 'X' and '.'
             if (str[k] != 'X' && str[k] != '.')
                 return (-1);
-            
-            // Check if we are still within the allocated grid space
-            if (i < max_row && j < max_col)
-            {
-                grid[i][j] = str[k];
-                j++;
-            }
+
+            grid[i][j] = str[k];
+            k++;
         }
+
+        grid[i][max_col] = '\0';
+
+        // After each row
+        if (str[k] == '\n')
+            k++;
+        else if (i < max_row - 1)  // not last row but no newline
+            return (-1);
     }
 
-    // Handle the last line if the file didn't end with a '\n'
-    if (i < max_row && j > 0)
-    {
-        if (j != max_col)
-            return (-1);
-        grid[i][j] = '\0';
-    }
-    
+    // After filling all rows, nothing extra should remain
+    if (str[k] != '\0')
+        return (-1);
+
     return (0);
 }
 
