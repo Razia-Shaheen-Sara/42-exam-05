@@ -135,7 +135,7 @@ int load_map(FILE* input, t_map* map, t_elements* elements)
         if (line_len == -1)
         {
             free(line);//free it cause getline allocated it for me
-            free_map(map->grid);
+            free(map->grid);
             return (-1);
         }
         if (line_len > 0 && line[line_len - 1] == '\n') //remove \n so width is correct
@@ -143,7 +143,7 @@ int load_map(FILE* input, t_map* map, t_elements* elements)
         if (line_len <= 0 && i != map->height - 1)//forbid empty line in the middle row but tolerate at last index
         {
             free(line);
-            free_map(map->grid);
+            free(map->grid);
             return(-1);
         }
         map->grid[i] = ft_substr(line, 0, line_len);
