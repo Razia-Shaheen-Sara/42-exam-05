@@ -90,34 +90,46 @@ char** make_grid(int height, int width)
     return (grid);
 }
 
-int fill_grid(char **grid, char *str, int max_row, int max_col)
+int fill_grid(char **grid, char *str, int height, int width)
 {
-    int k = 0;
+    int i = 0; // Current height index
+    int j = 0; // Current column index
 
-    for (int i = 0; i < max_row; i++)
+    for (int k = 0; str[k] != '\0'; k++)//iterating through string again
     {
-        for (int j = 0; j < max_col; j++)
+        if (str[k] == '\n')// If we hit a newline(could be end of any line including last)
         {
+            if (j != width) //if it is not the very end width
+                grid[i][j] = '\0'; // End the string for the current height
+            i++;//go to next height
+            j = 0;//reset
+            // If we've filled all height, we stop (prevents errors from trailing newlines)
+            if (i == height)
+                return (0);
+        }
+        else //when no newline
+        {
+            // Only allow 'X' and '.'
             if (str[k] != 'X' && str[k] != '.')
                 return (-1);
-
-            grid[i][j] = str[k];
-            k++;
+            
+            // Check if we are still within the allocated grid space
+            if (i < height && j < width)
+            {
+                grid[i][j] = str[k];
+                j++;
+            }
         }
-
-        grid[i][max_col] = '\0';
-
-        // After each row
-        if (str[k] == '\n')
-            k++;
-        else if (i < max_row - 1)  // not last row but no newline
-            return (-1);
     }
 
-    // After filling all rows, nothing extra should remain
-    if (str[k] != '\0')
-        return (-1);
-
+    // Handle the last line if the file didn't end with a '\n'
+    if (i < height && j > 0)
+    {
+        if (j != width)
+            return (-1);
+        grid[i][j] = '\0';
+    }
+    
     return (0);
 }
 
@@ -238,3 +250,39 @@ int main(int argc, char**argv)
 // str → buffer where the data will be stored
 // count → number of bytes to read
 // returns → number of bytes actually read, 0 if end of file, -1 on error
+
+
+
+int fill_grid(char **grid, char *str, int max_row, int max_col)
+{
+    int k = 0;
+
+    for (int i = 0; i < max_row; i++)
+    {
+        int j = 0;
+
+        while (str[k] != '\n' && str[k] != '\0')
+        {
+            if (j >= max_col)
+                return (-1);
+
+            if (str[k] != 'X' && str[k] != '.')
+                return (-1);
+
+            grid[i][j++] = str[k++];
+        }
+
+        if (j != max_col)
+            return (-1);
+
+        grid[i][j] = '\0';
+
+        if (str[k] == '\n')
+            k++;
+    }
+
+    if (str[k] != '\0')
+        return (-1);
+
+    return (0);
+}
