@@ -9,7 +9,7 @@ typedef struct s_game
 {
     int width;
     int height;
-    int iterations;
+    int iter;
     char dead;
     char alive;
     int i;
@@ -21,6 +21,13 @@ typedef struct s_game
 
 #endif
 
+//atoi → <stdlib.h>
+//read → <unistd.h>
+//putchar → <stdio.h>
+//malloc → <stdlib.h>
+//calloc → <stdlib.h>
+//realloc → <stdlib.h>
+//free → <stdlib.h>
 
 //iterations = how many times the board updates using these rules/number of rounds we play
 //rules:
