@@ -60,8 +60,6 @@ int validate_map(char *str, int height, int width)
 {
     if (!str || height <= 0 || width <= 0)
         return -1;
-    int i = 0;
-    int j = 0;
     int k = 0;
     //1. validate chars
     for(int i = 0; i < height; i++)// 1. validate chars(by nested); 2. middle line's \n, 3. last line's n

@@ -40,11 +40,21 @@ int make_board(t_game *game, char** argv)
         }
         for(int j = 0; j < game->width; j++)
         {
-            game->board[i][j] = ' ';
+            game->board[i][j] = ' ';//initialize whole board to dead
         }
     }
     return (0);
 }
+
+// //ssize_t read(int fd, void *buf, size_t count);
+// //switch (c)
+// //Checks which key was pressed: and decides whether to move depending on BOUNDS
+// //THINK BOUNDS: i is up-down; j = left-right
+// //'w' →  up (i--)
+// //'s' → down (i++)
+// //'a' → left (j--)
+// //'d' → right (j++)
+// //'x' → draw mode (on/off)
 
 void handle_key(t_game *game)
 {
@@ -164,20 +174,20 @@ int main(int argc, char** argv)
     if(argc != 4)
         return(1);
     t_game game;
-        if (make_board(&game, argv) == -1)
-            return(-1);
-        handle_key(&game);
-        for(int i = 0; i < game.iter; i++)
+    if (make_board(&game, argv) == -1)
+      return(-1);
+    handle_key(&game);
+    for(int i = 0; i < game.iter; i++)
+    {
+        if (play(&game) == -1)
         {
-            if (play(&game) == -1)
-            {
-                free_grid(game.board, game.height);
-                return(-1);
-            }
+          free_grid(game.board, game.height);
+          return(-1);
         }
-        print_board(&game);
-        free_grid(game.board, game.height);
-        return(0);
+    }
+    print_board(&game);
+    free_grid(game.board, game.height);
+    return(0);
 }
 
 // #include "life.h"
@@ -216,7 +226,7 @@ int main(int argc, char** argv)
 //             free_board(game);
 //             return(-1);
 //         }
-//         for (int j = 0; j < game->width; j++)//initialize whole board to dead
+//         for (int j = 0; j < game->width; j++)
 //         {
 //             game->board[i][j]= ' ';
 //         }
@@ -224,16 +234,6 @@ int main(int argc, char** argv)
 //     return (0);
 
 // }
-
-// //ssize_t read(int fd, void *buf, size_t count);
-// //switch (c)
-// //Checks which key was pressed: and decides whether to move depending on BOUNDS
-// //THINK BOUNDS: i is up-down; j = left-right
-// //'w' →  up (i--)
-// //'s' → down (i++)
-// //'a' → left (j--)
-// //'d' → right (j++)
-// //'x' → draw mode (on/off)
 
 // void handle_key(t_game* game) //only alive if is_valid_cmd is 0(valid) and draw mode on
 // {
