@@ -6,7 +6,7 @@
 /*   By: rshaheen <rshaheen@student.42.fr>            +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2026/02/24 15:05:33 by rshaheen      #+#    #+#                 */
-/*   Updated: 2026/02/24 15:29:22 by rshaheen      ########   odam.nl         */
+/*   Updated: 2026/02/25 13:57:51 by rshaheen      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,15 +75,15 @@ int validate_map(char *str, int height, int width)
         return -1;
     int k = 0;
     //1. validate chars
-    for(int i = 0; i < height; i++)// 1. validate chars(by nested); 2. middle line's \n, 3. last line's n
+    for(int i = 0; i < height; i++)// 1. validate chars(by nested); 2. all line's(minus the last) \n, 3. last line's n
     {
         for(int j = 0; j < width; j++)
         {
-            if(str[k] != 'X' && str[k] != '.')//validate chars
+            if(str[k] != 'X' && str[k] != '.')//validate chars within one line
                 return(-1);
             k++;
         }
-        if(i < height - 1)//middle rows
+        if(i < height - 1)//all rows except last one
         {
             if(str[k] != '\n')//must end with newline
                 return(-1);
