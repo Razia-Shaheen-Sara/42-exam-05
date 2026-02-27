@@ -267,39 +267,3 @@ int main(int argc, char **argv)
 // str → buffer where the data will be stored
 // count → number of bytes to read
 // returns → number of bytes actually read, 0 if end of file, -1 on error
-
-
-
-// int fill_grid(char **grid, char *str, int max_row, int max_col)
-// {
-//     int k = 0;
-
-//     for (int i = 0; i < max_row; i++)
-//     {
-//         int j = 0;
-
-//         while (str[k] != '\n' && str[k] != '\0')
-//         {
-//             if (j >= max_col)
-//                 return (-1);
-
-//             if (str[k] != 'X' && str[k] != '.')
-//                 return (-1);
-
-//             grid[i][j++] = str[k++];
-//         }
-
-//         if (j != max_col)
-//             return (-1);
-
-//         grid[i][j] = '\0';
-
-//         if (str[k] == '\n')
-//             k++;
-//     }
-
-//     if (str[k] != '\0')
-//         return (-1);
-
-//     return (0);
-// }

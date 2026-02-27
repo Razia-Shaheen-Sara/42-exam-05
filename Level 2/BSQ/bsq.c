@@ -11,7 +11,7 @@
 //test with a input using tab
 
 
-int load_elements(FILE* input,t_elements* elements)//Parse header
+int parse_header(FILE* input,t_elements* elements)//Parse header
 {
     int parsed_fields = fscanf(input, "%d %c %c %c", &(elements->num_lines), &(elements->empty), &(elements->obstacle), &(elements->full));
     if (parsed_fields != 4)
@@ -240,7 +240,7 @@ void print_filled_square(t_map* map, t_square* square, t_elements* element)
 
 
 //SEQUENCE:
-//1. load_elements
+//1. parse_header
 //2.load_map
 //3. find_biggst_square
 //4. print_filled_sq
@@ -251,7 +251,7 @@ int execute_bsq(FILE* input)
     t_elements elements;
     t_map map;
     t_square square;
-    if (load_elements(input, &elements) == -1)//parse header
+    if (parse_header(input, &elements) == -1)//parse header
         return (-1);
     if (load_map(input, &map, &elements) == -1)
         return (-1);
