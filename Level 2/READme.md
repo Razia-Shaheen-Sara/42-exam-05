@@ -1,6 +1,6 @@
-# 🟢 Grid Algorithms: Visual Guide
+# Grid Algorithms: Visual Guide
 
-### 📊 Side-by-Side Visualization
+### Side-by-Side Visualization
 
 | **Original Map**|**Largest Isld(FF)**| **DP(BSQ)**|**Game of Life**|
 | :----------- | :-------------- | :-------------- | :-------------- |
